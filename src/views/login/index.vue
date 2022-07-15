@@ -9,12 +9,12 @@
     <!-- /导航栏 -->
 
     <!-- 登录表单 -->
-    <van-form calss="formuse" @submit="login">
+    <van-form calss="formuse" @submit="login" ref="form">
       <van-field
-        v-model="username"
+        v-model="mobile"
         name="mobile"
         placeholder="用户名"
-        :rules="[{ required: true, message: '请填写用户名' }]"
+        :rules="rules.mobile"
       >
         <template #left-icon>
           <span class="toutiao toutiao-shouji"></span>
@@ -25,14 +25,26 @@
         v-model="password"
         type="text"
         name="code"
-        placeholder="密码"
-        :rules="[{ required: true, message: '请填写密码' }]"
+        placeholder="验证码"
+        :rules="rules.code"
       >
         <template #left-icon>
           <span class="toutiao toutiao-yanzhengma"></span>
         </template>
+
         <template #button>
-          <van-button class="codeBtn" type="default" size="small"
+          <van-count-down
+            :time="time"
+            v-if="isCuntTime"
+            @finish="isCuntTime = false"
+            format="ss"
+          />
+          <van-button
+            class="codeBtn"
+            type="default"
+            size="small"
+            v-else
+            @click.prevent="isCuntTimeFn"
             >获取验证码</van-button
           ></template
         >
@@ -46,15 +58,19 @@
 </template>
 
 <script>
-import { login } from '@/api/user'
+import { rules } from './rules'
+import { login, sendCode } from '@/api/user'
 export default {
   name: 'LoginIndex',
   components: {},
   props: {},
   data() {
     return {
-      username: '',
-      password: ''
+      mobile: '',
+      password: '',
+      rules,
+      time: 60000,
+      isCuntTime: false
     }
   },
   computed: {},
@@ -66,8 +82,51 @@ export default {
       this.$router.back()
     },
     async login() {
-      const res = await login(this.username, this.password)
-      console.log(res)
+      this.$toast.loading({
+        message: '憋急奥...',
+        forbidClick: true
+      })
+      try {
+        const res = await login(this.mobile, this.password)
+        console.log(res)
+        this.$store.commit('setUser', res.data.data)
+        this.$toast.success('来啦嗨嗨！')
+      } catch (err) {
+        const res = err.response.status
+        let messag = '服务器飞走了'
+        if (res === 400) {
+          messag = err.response.data.message
+        }
+        this.$toast.fail(messag)
+        // switch (res) {
+        //   case 400:
+        //     this.$toast.fail(err.response.data.message)
+        //     break
+        //   case 507:
+        //     this.$toast.fail('服务器裂开了')
+        //     break
+        //   default:
+        //     this.$toast.fail('服务器裂开了')
+        //     break
+        // }
+      }
+    },
+    async isCuntTimeFn() {
+      try {
+        await this.$refs.form.validate(rules.mobile)
+        await sendCode(this.mobile)
+        this.isCuntTime = true
+      } catch (err) {
+        console.log(err)
+        if (!err.response) {
+          this.$toast.fail('手机号格式不正确')
+        } else {
+          const status = err.response.status
+          if (status === 404 || status === 429) {
+            this.$toast.fail(err.response.data.message)
+          }
+        }
+      }
     }
   }
 }
