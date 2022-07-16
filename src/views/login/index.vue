@@ -90,6 +90,7 @@ export default {
         const res = await login(this.mobile, this.password)
         console.log(res)
         this.$store.commit('setUser', res.data.data)
+        this.$router.push('/my')
         this.$toast.success('来啦嗨嗨！')
       } catch (err) {
         const res = err.response.status
