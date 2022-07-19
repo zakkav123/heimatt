@@ -10,7 +10,7 @@ request.interceptors.request.use(
   (config) => {
     const token = store.state.user.token
     if (token) {
-      config.headers.Authorization = `Bearer${token}`
+      config.headers.Authorization = `Bearer ${token}`
     }
     return config
   },
