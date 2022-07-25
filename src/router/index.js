@@ -10,6 +10,21 @@ const routes = [
     component: () => import('@/views/login')
   },
   {
+    path: '/article/:articleId',
+    name: 'article',
+    component: () => import('@/views/article')
+  },
+  {
+    path: '/search',
+    name: 'search',
+    component: () => import('@/views/search')
+  },
+  {
+    path: '/user',
+    name: 'user',
+    component: () => import('@/views/user')
+  },
+  {
     path: '/',
     name: 'layout',
     component: () => import('@/views/Layout'),

@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 const relativeTime = require('dayjs/plugin/relativeTime')
 dayjs.extend(relativeTime)
 
-require('dayjs/locale/zh-cn')
-dayjs.locale('zh-ch')
+const zh = require('dayjs/locale/zh-cn')
+dayjs.locale(zh)
 
 export default dayjs

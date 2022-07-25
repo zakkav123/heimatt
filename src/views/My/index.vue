@@ -17,7 +17,7 @@
             </van-row>
           </van-col>
           <van-col class="clo2" span="12">
-            <van-button class="codeBtn" type="default" size="small"
+            <van-button class="codeBtn" type="default" size="small" to="/user"
               >编辑资料</van-button
             ></van-col
           >

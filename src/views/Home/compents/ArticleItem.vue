@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div @click="articlesInfoList(list.art_id)">
     <!-- 渲染无图片的 -->
     <van-cell
       v-if="list.cover.type === 0"
@@ -50,8 +50,13 @@ export default {
   computed: {
     articleDesc() {
       const art = this.list
-      const time = datjs(art.pubdate).fromNow
+      const time = datjs(art.pubdate).fromNow()
       return `${art.aut_name} ${art.comm_count}评论 ${time}`
+    }
+  },
+  methods: {
+    articlesInfoList(id) {
+      this.$router.push(`/article/${id}`)
     }
   }
 }
